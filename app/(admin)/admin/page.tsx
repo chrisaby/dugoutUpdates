@@ -16,18 +16,17 @@ export default async function AdminDashboardPage() {
   ] = await Promise.all([
     supabase.from('tournament_settings').select('*').single(),
     supabase.from('standings_view').select('*'),
-    supabase.from('matches').select('*').eq('phase', 'group').eq('status', 'completed'),
-    supabase.from('matches').select('id, status, phase'),
+    supabase.from('matches').select('team1_id, team2_id, score1, score2, phase, status').eq('phase', 'group').eq('status', 'completed'),
+    supabase.from('matches').select('id, status, phase').eq('phase', 'group'),
   ])
 
   const settings = settingsData as TournamentSettings | null
   const locked = settings?.group_stage_locked ?? false
-  const rows = sortStandings(standingsData as StandingsRow[] ?? [], groupMatchData as Match[] ?? [])
-  const matches = matchCountData ?? []
-  const groupMatches = matches.filter((m) => m.phase === 'group')
+  const rows = sortStandings((standingsData ?? []) as StandingsRow[], (groupMatchData ?? []) as Match[])
+  const groupMatches = matchCountData ?? []
   const played = groupMatches.filter((m) => m.status === 'completed').length
   const upcoming = groupMatches.filter((m) => m.status === 'upcoming').length
-  const live = matches.filter((m) => m.status === 'live').length
+  const live = groupMatches.filter((m) => m.status === 'live').length
 
   return (
     <div className="space-y-8">
