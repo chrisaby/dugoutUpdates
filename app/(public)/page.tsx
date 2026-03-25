@@ -33,6 +33,7 @@ export default async function HomePage() {
       .select('*, team1:teams!matches_team1_id_fkey(id,name,colour,badge_url,created_at), team2:teams!matches_team2_id_fkey(id,name,colour,badge_url,created_at)')
       .eq('status', 'completed')
       .order('date', { ascending: false })
+      .order('id', { ascending: false })
       .limit(1),
     supabase.from('top_scorers_view').select('*').limit(1),
     supabase
