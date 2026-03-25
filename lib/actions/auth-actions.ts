@@ -3,24 +3,25 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-export async function signInWithEmail(formData: FormData) {
+export async function signInWithPassword(formData: FormData) {
   const email = formData.get('email') as string
-  if (!email) return
+  const password = formData.get('password') as string
+
+  if (!email || !password) {
+    redirect('/auth/login?error=invalid_credentials')
+  }
 
   const supabase = await createClient()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
-    options: {
-      emailRedirectTo: `${appUrl}/auth/callback`,
-    },
+    password,
   })
 
   if (error) {
-    console.error('[auth] signInWithOtp error:', error.message)
-    redirect('/auth/login?error=send_failed')
+    console.error('[auth] signInWithPassword error:', error.message)
+    redirect('/auth/login?error=invalid_credentials')
   }
 
-  redirect('/auth/login?sent=true')
+  redirect('/admin')
 }
