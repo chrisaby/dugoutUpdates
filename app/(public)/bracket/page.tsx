@@ -24,8 +24,9 @@ export default async function BracketPage() {
   const locked = settings?.group_stage_locked ?? false
   const matches = knockoutData as MatchWithTeams[] ?? []
 
-  const semi1 = matches.find((m) => m.phase === 'semi') ?? null
-  const semi2 = matches.filter((m) => m.phase === 'semi')[1] ?? null
+  const semis = matches.filter((m) => m.phase === 'semi')
+  const semi1 = semis[0] ?? null
+  const semi2 = semis[1] ?? null
   const finalMatch = matches.find((m) => m.phase === 'final') ?? null
 
   return (

@@ -45,7 +45,7 @@ function BracketSlot({
   return (
     <div className="rounded-lg border border-[var(--border)] overflow-hidden flex-1 max-w-full"
       style={{ backgroundColor: 'var(--surface)' }}>
-      <div className="px-3 py-1.5 border-b border-[var(--border)] bg-[var(--surface-hover)]">
+      <div className="px-3 py-1.5 border-b border-[var(--border)]" style={{ backgroundColor: 'var(--surface-hover)' }}>
         <span className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">{label}</span>
       </div>
       <div className="p-3 space-y-2">

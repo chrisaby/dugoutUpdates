@@ -22,7 +22,13 @@ describe('BracketView', () => {
   it('shows TBD when group stage not locked', () => {
     render(<BracketView locked={false} semi1={null} semi2={null} final={null} />)
     const tbds = screen.getAllByText('TBD')
-    expect(tbds.length).toBeGreaterThan(0)
+    expect(tbds.length).toBe(6)
+  })
+
+  it('shows TBD for a null semi when locked is true', () => {
+    render(<BracketView locked={true} semi1={null} semi2={null} final={null} />)
+    const tbds = screen.getAllByText('TBD')
+    expect(tbds.length).toBe(6)
   })
 
   it('shows semi-final labels', () => {
