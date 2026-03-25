@@ -38,5 +38,7 @@ describe('StatsLeaderboard', () => {
     const rankCells = container.querySelectorAll('[data-rank]')
     expect(rankCells[0].getAttribute('data-rank')).toBe('1')
     expect(rankCells[1].getAttribute('data-rank')).toBe('2')
+    expect(rankCells[0].className).toContain('text-[var(--gold)]')
+    expect(rankCells[1].className).not.toContain('text-[var(--gold)]')
   })
 })

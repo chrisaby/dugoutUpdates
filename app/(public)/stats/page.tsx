@@ -4,6 +4,11 @@ import type { TopScorer } from '@/lib/types'
 
 export const revalidate = 60
 
+interface CardRow {
+  type: string
+  player: { id: string; name: string; team: { id: string; name: string; colour: string | null } }
+}
+
 interface CardAgg {
   id: string
   name: string
@@ -35,7 +40,7 @@ export default async function StatsPage() {
 
   // Aggregate cards per player
   const cardMap: Record<string, CardAgg> = {}
-  for (const c of (cardsData ?? []) as unknown as Array<{ type: string; player: { id: string; name: string; team: { id: string; name: string; colour: string | null } } }>) {
+  for (const c of (cardsData ?? []) as unknown as CardRow[]) {
     const p = c.player
     if (!cardMap[p.id]) {
       cardMap[p.id] = { id: p.id, name: p.name, teamName: p.team.name, teamColour: p.team.colour, yellow: 0, red: 0 }
