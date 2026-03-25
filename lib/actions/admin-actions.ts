@@ -146,10 +146,11 @@ export async function addPlayer(formData: FormData) {
   const name = (formData.get('name') as string).trim()
   const position = formData.get('position') as string
 
-  if (!name || !position) return
+  if (!name || !position) throw new Error('Name and position are required')
   const { error } = await supabase.from('players').insert({ team_id: teamId, name, position })
   if (error) throw new Error(error.message)
   revalidatePath(`/admin/teams/${teamId}`)
+  revalidatePath(`/teams/${teamId}`)
 }
 
 export async function deletePlayer(formData: FormData) {
@@ -160,6 +161,7 @@ export async function deletePlayer(formData: FormData) {
   const { error } = await supabase.from('players').delete().eq('id', playerId)
   if (error) throw new Error(error.message)
   revalidatePath(`/admin/teams/${teamId}`)
+  revalidatePath(`/teams/${teamId}`)
   revalidatePath('/stats')
 }
 
