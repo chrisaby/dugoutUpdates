@@ -1,0 +1,14 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="12" fill="#bef043"/>
+  <text
+    x="50"
+    y="55"
+    font-family="'Bebas Neue', Arial, sans-serif"
+    font-size="50"
+    font-weight="400"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    fill="#050c05"
+    letter-spacing="1"
+  >FPL</text>
+</svg>
