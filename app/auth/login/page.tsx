@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { signInWithPassword } from '@/lib/actions/auth-actions'
 
 interface Props {
@@ -9,6 +10,20 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="fixed top-4 left-4">
+        <Link
+          href="/"
+          className="text-xs font-semibold tracking-widest uppercase px-3 py-1.5 rounded team-card"
+          style={{
+            color: 'var(--muted)',
+            border: '1px solid var(--border)',
+            letterSpacing: '0.1em',
+            ['--team-color' as string]: 'var(--border-hover)',
+          }}
+        >
+          ← Public site
+        </Link>
+      </div>
       <div className="w-full max-w-sm mx-auto px-4">
         <div className="text-center mb-8">
           <span className="text-[var(--primary)] font-black text-3xl">FPL</span>
@@ -62,8 +77,8 @@ export default async function LoginPage({ searchParams }: Props) {
 
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-colors hover:opacity-90"
-            style={{ backgroundColor: 'var(--primary)' }}
+            className="w-full py-2.5 rounded-lg font-semibold text-sm transition-colors hover:opacity-90"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}
           >
             Sign in
           </button>
