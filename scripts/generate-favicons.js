@@ -1,6 +1,7 @@
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
+const toIco = require('to-ico');
 
 const publicDir = path.join(__dirname, '../public');
 const svgPath = path.join(publicDir, 'favicon.svg');
@@ -31,19 +32,17 @@ async function generateFavicons() {
 
     console.log('✓ Generated apple-touch-icon-180x180.png');
 
-    // Generate favicon.ico from 32x32 PNG (ICO is 32x32)
-    await sharp(svg)
+    // Generate favicon.ico from 32x32 PNG
+    const pngBuffer = await sharp(svg)
       .resize(32, 32, {
         fit: 'contain',
         background: { r: 190, g: 240, b: 67, alpha: 1 }
       })
       .png()
-      .toBuffer()
-      .then(async (pngBuffer) => {
-        // Use png2ico-standalone or simply save as PNG with .ico extension
-        // For compatibility, we'll save the PNG buffer as favicon.ico
-        fs.writeFileSync(path.join(publicDir, 'favicon.ico'), pngBuffer);
-      });
+      .toBuffer();
+
+    const icoBuffer = await toIco(pngBuffer);
+    fs.writeFileSync(path.join(publicDir, 'favicon.ico'), icoBuffer);
 
     console.log('✓ Generated favicon.ico');
     console.log('\n✨ All favicons generated successfully!');
