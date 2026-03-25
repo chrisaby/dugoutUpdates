@@ -1,5 +1,5 @@
 export type Position = 'GK' | 'DEF' | 'MID' | 'FWD'
-export type Phase = 'group' | 'semi' | 'final'
+export type Phase = 'group' | 'semi' | 'final' | 'third_place'
 export type MatchStatus = 'upcoming' | 'live' | 'completed'
 export type CardType = 'yellow' | 'red'
 
