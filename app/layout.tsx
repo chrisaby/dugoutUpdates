@@ -18,6 +18,14 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: 'Federal Premier League',
   description: '6-team internal organisation football tournament',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico' }
+    ],
+    apple: '/apple-touch-icon-180x180.png',
+  },
 }
 
 export default function RootLayout({
