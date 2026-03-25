@@ -19,6 +19,7 @@ export async function signInWithEmail(formData: FormData) {
 
   if (error) {
     console.error('[auth] signInWithOtp error:', error.message)
+    redirect('/auth/login?error=send_failed')
   }
 
   redirect('/auth/login?sent=true')

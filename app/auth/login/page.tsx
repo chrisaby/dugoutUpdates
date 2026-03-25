@@ -1,11 +1,11 @@
 import { signInWithEmail } from '@/lib/actions/auth-actions'
 
 interface Props {
-  searchParams: Promise<{ sent?: string }>
+  searchParams: Promise<{ sent?: string; error?: string }>
 }
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { sent } = await searchParams
+  const { sent, error } = await searchParams
 
   if (sent) {
     return (
@@ -29,6 +29,19 @@ export default async function LoginPage({ searchParams }: Props) {
           <h1 className="text-xl font-bold text-white mt-2">Admin Login</h1>
           <p className="text-[var(--muted)] text-sm mt-1">Enter your email to receive a magic link</p>
         </div>
+
+        {error && (
+          <div className="rounded-lg border border-red-800/60 px-4 py-3 mb-4"
+            style={{ backgroundColor: 'rgba(239,68,68,0.07)' }}>
+            <p className="text-red-400 text-sm">
+              {error === 'invalid_link'
+                ? 'That link is invalid or expired. Please request a new one.'
+                : error === 'send_failed'
+                  ? 'Failed to send magic link. Please try again.'
+                  : 'Something went wrong. Please try again.'}
+            </p>
+          </div>
+        )}
 
         <form action={signInWithEmail} className="space-y-4">
           <div>
