@@ -19,7 +19,8 @@ export async function updateFixture(formData: FormData) {
   const date = (formData.get('date') as string) || null
   const venue = (formData.get('venue') as string) || null
 
-  await supabase.from('matches').update({ date, venue }).eq('id', matchId)
+  const { error } = await supabase.from('matches').update({ date, venue }).eq('id', matchId)
+  if (error) throw new Error(error.message)
   revalidatePath('/admin/fixtures')
   revalidatePath('/fixtures')
   revalidatePath('/')
@@ -32,10 +33,13 @@ export async function updateMatchResult(formData: FormData) {
   const matchId = formData.get('matchId') as string
   const score1 = parseInt(formData.get('score1') as string)
   const score2 = parseInt(formData.get('score2') as string)
+  if (isNaN(score1) || isNaN(score2)) throw new Error('Invalid score values')
   const status = formData.get('status') as string
 
-  await supabase.from('matches').update({ score1, score2, status }).eq('id', matchId)
+  const { error } = await supabase.from('matches').update({ score1, score2, status }).eq('id', matchId)
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
+  revalidatePath('/admin/matches')
   revalidatePath('/results')
   revalidatePath('/standings')
   revalidatePath('/fixtures')
@@ -52,12 +56,13 @@ export async function addGoal(formData: FormData) {
   const minute = minuteRaw ? parseInt(minuteRaw) : null
   const isOwnGoal = formData.get('isOwnGoal') === 'on'
 
-  await supabase.from('goals').insert({
+  const { error } = await supabase.from('goals').insert({
     match_id: matchId,
     player_id: playerId,
     minute,
     is_own_goal: isOwnGoal,
   })
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -69,7 +74,8 @@ export async function deleteGoal(formData: FormData) {
   const goalId = formData.get('goalId') as string
   const matchId = formData.get('matchId') as string
 
-  await supabase.from('goals').delete().eq('id', goalId)
+  const { error } = await supabase.from('goals').delete().eq('id', goalId)
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -86,10 +92,12 @@ export async function addCard(formData: FormData) {
   const minuteRaw = formData.get('minute') as string
   const minute = minuteRaw ? parseInt(minuteRaw) : null
 
-  await supabase.from('cards').insert({ match_id: matchId, player_id: playerId, type, minute })
+  const { error } = await supabase.from('cards').insert({ match_id: matchId, player_id: playerId, type, minute })
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
+  revalidatePath('/')
 }
 
 export async function deleteCard(formData: FormData) {
@@ -97,10 +105,12 @@ export async function deleteCard(formData: FormData) {
   const cardId = formData.get('cardId') as string
   const matchId = formData.get('matchId') as string
 
-  await supabase.from('cards').delete().eq('id', cardId)
+  const { error } = await supabase.from('cards').delete().eq('id', cardId)
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
+  revalidatePath('/')
 }
 
 // --- MOTM ---
@@ -110,9 +120,10 @@ export async function setMotm(formData: FormData) {
   const matchId = formData.get('matchId') as string
   const playerId = formData.get('playerId') as string
 
-  await supabase
+  const { error } = await supabase
     .from('match_motm')
     .upsert({ match_id: matchId, motm_player_id: playerId }, { onConflict: 'match_id' })
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
 }
@@ -121,7 +132,8 @@ export async function clearMotm(formData: FormData) {
   const supabase = await requireAuth()
   const matchId = formData.get('matchId') as string
 
-  await supabase.from('match_motm').delete().eq('match_id', matchId)
+  const { error } = await supabase.from('match_motm').delete().eq('match_id', matchId)
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
 }
@@ -135,7 +147,8 @@ export async function addPlayer(formData: FormData) {
   const position = formData.get('position') as string
 
   if (!name || !position) return
-  await supabase.from('players').insert({ team_id: teamId, name, position })
+  const { error } = await supabase.from('players').insert({ team_id: teamId, name, position })
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/teams/${teamId}`)
 }
 
@@ -144,8 +157,10 @@ export async function deletePlayer(formData: FormData) {
   const playerId = formData.get('playerId') as string
   const teamId = formData.get('teamId') as string
 
-  await supabase.from('players').delete().eq('id', playerId)
+  const { error } = await supabase.from('players').delete().eq('id', playerId)
+  if (error) throw new Error(error.message)
   revalidatePath(`/admin/teams/${teamId}`)
+  revalidatePath('/stats')
 }
 
 // --- Tournament settings ---
@@ -155,7 +170,8 @@ export async function toggleGroupStageLock(formData: FormData) {
   const locked = formData.get('locked') === 'true'
 
   // tournament_settings always has exactly one row (seeded in 001_schema.sql)
-  await supabase.from('tournament_settings').update({ group_stage_locked: locked }).not('id', 'is', null)
+  const { error } = await supabase.from('tournament_settings').update({ group_stage_locked: locked }).not('id', 'is', null)
+  if (error) throw new Error(error.message)
   revalidatePath('/admin')
   revalidatePath('/bracket')
 }
