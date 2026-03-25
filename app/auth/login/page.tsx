@@ -1,3 +1,5 @@
+import { signInWithEmail } from '@/lib/actions/auth-actions'
+
 interface Props {
   searchParams: Promise<{ sent?: string }>
 }
@@ -28,14 +30,7 @@ export default async function LoginPage({ searchParams }: Props) {
           <p className="text-[var(--muted)] text-sm mt-1">Enter your email to receive a magic link</p>
         </div>
 
-        <form
-          action={async (formData: FormData) => {
-            'use server'
-            const { signInWithEmail } = await import('@/lib/actions/auth-actions')
-            await signInWithEmail(formData)
-          }}
-          className="space-y-4"
-        >
+        <form action={signInWithEmail} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
               Email address

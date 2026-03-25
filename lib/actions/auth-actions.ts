@@ -10,12 +10,16 @@ export async function signInWithEmail(formData: FormData) {
   const supabase = await createClient()
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo: `${appUrl}/auth/callback`,
     },
   })
+
+  if (error) {
+    console.error('[auth] signInWithOtp error:', error.message)
+  }
 
   redirect('/auth/login?sent=true')
 }
