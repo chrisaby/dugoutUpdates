@@ -8,25 +8,36 @@ interface Props {
 
 export function StandingsTable({ rows, mini = true }: Props) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
+    <div
+      className="overflow-x-auto rounded-lg"
+      style={{ border: '1px solid var(--border)' }}
+    >
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-[var(--muted)] text-xs uppercase tracking-wide border-b border-[var(--border)]"
-            style={{ backgroundColor: 'var(--surface)' }}>
-            <th className="text-left py-3 px-4">#</th>
-            <th className="text-left py-3 px-4">Team</th>
-            <th className="py-3 px-3 text-center">P</th>
-            {!mini && (
-              <>
-                <th className="py-3 px-3 text-center">W</th>
-                <th className="py-3 px-3 text-center">D</th>
-                <th className="py-3 px-3 text-center">L</th>
-                <th className="py-3 px-3 text-center">GF</th>
-                <th className="py-3 px-3 text-center">GA</th>
-              </>
-            )}
-            <th className="py-3 px-3 text-center">GD</th>
-            <th className="py-3 px-4 text-center font-bold">Pts</th>
+          <tr
+            style={{
+              backgroundColor: 'var(--surface-elevated)',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            {['#', 'Club', 'P', ...(!mini ? ['W', 'D', 'L', 'GF', 'GA'] : []), 'GD', 'Pts'].map((col, i) => (
+              <th
+                key={col + i}
+                className={cn(
+                  'py-3',
+                  col === '#' || col === 'Club' ? 'px-4 text-left' : 'px-3 text-center'
+                )}
+                style={{
+                  color: col === 'Pts' ? 'var(--primary)' : 'var(--muted)',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {col}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -35,45 +46,79 @@ export function StandingsTable({ rows, mini = true }: Props) {
             return (
               <tr
                 key={row.id}
-                data-qualified={isQualified}
-                className={cn(
-                  'border-b border-[var(--border)] last:border-0 transition-colors',
-                  isQualified
-                    ? 'border-l-2 border-l-[var(--gold)] hover:bg-amber-950/20'
-                    : 'hover:bg-[var(--surface-hover)]'
-                )}
+                className="hover-surface"
+                style={{
+                  borderBottom: index < rows.length - 1 ? '1px solid var(--border)' : undefined,
+                  backgroundColor: 'var(--surface)',
+                }}
               >
-                <td className={cn(
-                  'py-3 px-4 font-bold text-sm',
-                  isQualified ? 'text-[var(--gold)]' : 'text-[var(--muted)]'
-                )}>
-                  {index + 1}
-                </td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    {row.colour && (
+                    {isQualified && (
                       <span
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: row.colour }}
+                        className="w-0.5 h-4 rounded-full"
+                        style={{ backgroundColor: 'var(--primary)' }}
                       />
                     )}
-                    <span className="font-semibold text-white">{row.name}</span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-display, Bebas Neue)',
+                        fontSize: '16px',
+                        color: isQualified ? 'var(--primary)' : 'var(--muted)',
+                        lineHeight: 1,
+                      }}
+                    >
+                      {index + 1}
+                    </span>
                   </div>
                 </td>
-                <td className="py-3 px-3 text-center text-[var(--muted)]">{row.played}</td>
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: row.colour ?? 'var(--border-hover)' }}
+                    />
+                    <span
+                      className="font-semibold"
+                      style={{ color: 'var(--foreground)' }}
+                    >
+                      {row.name}
+                    </span>
+                  </div>
+                </td>
+                <td
+                  className="py-3 px-3 text-center"
+                  style={{ color: 'var(--muted-light)' }}
+                >
+                  {row.played}
+                </td>
                 {!mini && (
                   <>
-                    <td className="py-3 px-3 text-center text-[var(--muted)]">{row.won}</td>
-                    <td className="py-3 px-3 text-center text-[var(--muted)]">{row.drawn}</td>
-                    <td className="py-3 px-3 text-center text-[var(--muted)]">{row.lost}</td>
-                    <td className="py-3 px-3 text-center text-[var(--muted)]">{row.gf}</td>
-                    <td className="py-3 px-3 text-center text-[var(--muted)]">{row.ga}</td>
+                    <td className="py-3 px-3 text-center" style={{ color: 'var(--muted-light)' }}>{row.won}</td>
+                    <td className="py-3 px-3 text-center" style={{ color: 'var(--muted-light)' }}>{row.drawn}</td>
+                    <td className="py-3 px-3 text-center" style={{ color: 'var(--muted-light)' }}>{row.lost}</td>
+                    <td className="py-3 px-3 text-center" style={{ color: 'var(--muted-light)' }}>{row.gf}</td>
+                    <td className="py-3 px-3 text-center" style={{ color: 'var(--muted-light)' }}>{row.ga}</td>
                   </>
                 )}
-                <td className="py-3 px-3 text-center text-[var(--muted)]">
+                <td
+                  className="py-3 px-3 text-center"
+                  style={{ color: row.gd > 0 ? 'var(--muted-light)' : 'var(--muted)' }}
+                >
                   {row.gd > 0 ? `+${row.gd}` : row.gd}
                 </td>
-                <td className="py-3 px-4 text-center font-black text-white">{row.points}</td>
+                <td className="py-3 px-4 text-center">
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-display, Bebas Neue)',
+                      fontSize: '20px',
+                      lineHeight: 1,
+                      color: isQualified ? 'var(--primary)' : 'var(--foreground)',
+                    }}
+                  >
+                    {row.points}
+                  </span>
+                </td>
               </tr>
             )
           })}

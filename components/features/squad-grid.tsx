@@ -1,11 +1,10 @@
-import { cn } from '@/lib/utils'
 import type { Player } from '@/lib/types'
 
 const POSITION_CONFIG = {
-  GK: { label: 'GK', className: 'bg-amber-900/40 text-amber-400 border-amber-800' },
-  DEF: { label: 'DEF', className: 'bg-blue-900/40 text-blue-400 border-blue-800' },
-  MID: { label: 'MID', className: 'bg-green-900/40 text-green-400 border-green-800' },
-  FWD: { label: 'FWD', className: 'bg-red-900/40 text-red-400 border-red-800' },
+  GK:  { label: 'GK',  color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',  border: 'rgba(245,158,11,0.35)' },
+  DEF: { label: 'DEF', color: '#60a5fa', bg: 'rgba(96,165,250,0.10)',  border: 'rgba(96,165,250,0.30)' },
+  MID: { label: 'MID', color: '#bef043', bg: 'rgba(190,240,67,0.10)',  border: 'rgba(190,240,67,0.30)' },
+  FWD: { label: 'FWD', color: '#f87171', bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.30)' },
 } as const
 
 interface Props {
@@ -19,24 +18,37 @@ export function SquadGrid({ players }: Props) {
   )
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
       {sorted.map((player) => {
         const pos = POSITION_CONFIG[player.position]
         return (
           <div
             key={player.id}
-            className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] hover:border-slate-600 transition-colors"
-            style={{ backgroundColor: 'var(--surface)' }}
+            className="squad-card flex items-center gap-3 p-3 rounded-lg"
+            style={{
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--border)',
+              /* CSS variable for hover border color */
+              ['--pos-border' as string]: pos.border,
+            }}
           >
             <span
-              className={cn(
-                'text-xs font-bold px-2 py-0.5 rounded border flex-shrink-0',
-                pos.className
-              )}
+              className="text-xs font-bold px-2 py-0.5 rounded flex-shrink-0"
+              style={{
+                color: pos.color,
+                backgroundColor: pos.bg,
+                border: `1px solid ${pos.border}`,
+                letterSpacing: '0.06em',
+              }}
             >
               {pos.label}
             </span>
-            <span className="text-white font-medium text-sm">{player.name}</span>
+            <span
+              className="font-medium text-sm"
+              style={{ color: 'var(--foreground)' }}
+            >
+              {player.name}
+            </span>
           </div>
         )
       })}

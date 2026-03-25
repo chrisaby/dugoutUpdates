@@ -14,7 +14,7 @@ export default async function FixturesPage({ searchParams }: Props) {
   const { phase, team } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: teamsData }, { data: matchesData }] = await Promise.all([
+  const [{ data: teamsData, error: teamsError }, { data: matchesData, error: matchesError }] = await Promise.all([
     supabase.from('teams').select('*').order('name'),
     supabase
       .from('matches')
@@ -26,24 +26,67 @@ export default async function FixturesPage({ searchParams }: Props) {
       .order('date', { ascending: true }),
   ])
 
+  if (teamsError) console.error('[fixtures] teams query failed:', teamsError.message)
+  if (matchesError) console.error('[fixtures] matches query failed:', matchesError.message)
+
   const teams = teamsData as Team[] ?? []
   let matches = matchesData as MatchWithTeams[] ?? []
 
-  // Apply filters
   if (phase) matches = matches.filter((m) => m.phase === phase)
   if (team) matches = matches.filter((m) => m.team1_id === team || m.team2_id === team)
 
   return (
     <div>
-      <h1 className="text-3xl font-black text-white mb-1">Fixtures</h1>
-      <p className="text-[var(--muted)] text-sm mb-6">{matches.length} match{matches.length !== 1 ? 'es' : ''}</p>
+      {/* Page header */}
+      <div className="mb-10 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
+        <p
+          className="text-xs font-bold uppercase mb-2"
+          style={{ color: 'var(--primary)', letterSpacing: '0.2em' }}
+        >
+          Schedule
+        </p>
+        <div className="flex items-end justify-between gap-4">
+          <h1
+            className="leading-none"
+            style={{
+              fontFamily: 'var(--font-display, Bebas Neue)',
+              fontSize: 'clamp(40px, 8vw, 72px)',
+              color: 'var(--foreground)',
+              letterSpacing: '0.03em',
+            }}
+          >
+            Fixtures
+          </h1>
+          <span
+            className="font-bold mb-1"
+            style={{
+              fontFamily: 'var(--font-display, Bebas Neue)',
+              fontSize: '24px',
+              color: 'var(--muted)',
+              letterSpacing: '0.05em',
+            }}
+          >
+            {matches.length} match{matches.length !== 1 ? 'es' : ''}
+          </span>
+        </div>
+      </div>
 
       <Suspense>
         <FixtureFilters teams={teams} />
       </Suspense>
 
       {matches.length === 0 ? (
-        <p className="text-[var(--muted)] text-center py-12">No matches found.</p>
+        <div
+          className="text-center py-16"
+          style={{ color: 'var(--muted)' }}
+        >
+          <p
+            className="text-sm"
+            style={{ letterSpacing: '0.05em' }}
+          >
+            No matches found.
+          </p>
+        </div>
       ) : (
         <div className="grid gap-3">
           {matches.map((match) => (

@@ -50,78 +50,190 @@ export default async function HomePage() {
   const liveMatches = liveMatchData as MatchWithTeams[] ?? []
 
   return (
-    <div className="space-y-8">
-      {/* Live scores widget */}
+    <div className="space-y-10">
+      {/* Live widget */}
       {liveMatches.length > 0 && <LiveScoreWidget initialMatches={liveMatches} />}
 
       {/* Hero */}
-      <div>
-        <h1 className="text-4xl font-black text-white">Federal Premier League</h1>
-        <p className="text-[var(--muted)] mt-1">6-team internal organisation football tournament</p>
+      <div className="border-b pb-8" style={{ borderColor: 'var(--border)' }}>
+        <p
+          className="text-xs font-bold uppercase mb-2"
+          style={{ color: 'var(--primary)', letterSpacing: '0.2em' }}
+        >
+          Season 2026
+        </p>
+        <h1
+          className="leading-none"
+          style={{
+            fontFamily: 'var(--font-display, Bebas Neue)',
+            fontSize: 'clamp(48px, 10vw, 96px)',
+            color: 'var(--foreground)',
+            letterSpacing: '0.02em',
+          }}
+        >
+          Federal Premier
+          <br />
+          <span style={{ color: 'var(--primary)' }}>League</span>
+        </h1>
+        <p
+          className="mt-3 text-sm"
+          style={{ color: 'var(--muted)' }}
+        >
+          6-team internal organisation football tournament
+        </p>
       </div>
 
-      {/* Next match + countdown */}
-      {nextMatch && (
-        <section className="rounded-xl border border-[var(--border)] p-5" style={{ backgroundColor: 'var(--surface)' }}>
-          <h2 className="text-xs font-bold text-[var(--muted)] uppercase tracking-wide mb-4">Next Match</h2>
-          <FixtureCard match={nextMatch} />
-          {nextMatch.date && (
-            <div className="mt-4 pt-4 border-t border-[var(--border)]">
-              <p className="text-xs text-[var(--muted)] mb-2">Kicks off in</p>
-              <CountdownTimer targetDate={nextMatch.date} />
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* Latest result */}
-      {lastResult && (
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">Latest Result</h2>
-            <Link href="/results" className="text-xs text-[var(--primary)] hover:underline">All results →</Link>
-          </div>
-          <FixtureCard match={lastResult} />
-        </section>
-      )}
-
+      {/* Next match + Standings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {nextMatch && (
+          <section>
+            <SectionHeading label="Next Match" href="/fixtures" linkLabel="All fixtures" />
+            <FixtureCard match={nextMatch} />
+            {nextMatch.date && (
+              <div
+                className="mt-4 pt-4"
+                style={{ borderTop: '1px solid var(--border)' }}
+              >
+                <p
+                  className="text-xs font-bold uppercase mb-3"
+                  style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}
+                >
+                  Kicks off in
+                </p>
+                <CountdownTimer targetDate={nextMatch.date} />
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Mini standings */}
         <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">Standings (Top 4)</h2>
-            <Link href="/standings" className="text-xs text-[var(--primary)] hover:underline">Full table →</Link>
-          </div>
+          <SectionHeading label="Standings" href="/standings" linkLabel="Full table" />
           <StandingsTable rows={top4} mini />
         </section>
+      </div>
 
-        {/* Top scorer widget */}
+      {/* Latest result + Golden boot */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {lastResult && (
+          <section>
+            <SectionHeading label="Latest Result" href="/results" linkLabel="All results" />
+            <FixtureCard match={lastResult} />
+          </section>
+        )}
+
+        {/* Golden boot */}
         {topScorer && (
           <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">Golden Boot</h2>
-              <Link href="/stats" className="text-xs text-[var(--primary)] hover:underline">All stats →</Link>
-            </div>
-            <div className="rounded-xl border border-[var(--border)] p-5 flex items-center gap-4"
-              style={{ backgroundColor: 'var(--surface)' }}>
-              <span className="text-4xl">⚽</span>
-              <div>
-                <p className="text-xl font-black text-white">{topScorer.name}</p>
-                <div className="flex items-center gap-2 mt-0.5">
+            <SectionHeading label="Golden Boot" href="/stats" linkLabel="All stats" />
+            <div
+              className="rounded-lg p-5 flex items-center gap-5"
+              style={{
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+                background: `linear-gradient(135deg, var(--primary-glow) 0%, var(--surface) 60%)`,
+              }}
+            >
+              <div
+                className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{
+                  backgroundColor: 'var(--primary-glow)',
+                  border: '1px solid rgba(190,240,67,0.3)',
+                  fontSize: '28px',
+                }}
+              >
+                ⚽
+              </div>
+              <div className="flex-1 min-w-0">
+                <p
+                  className="font-bold leading-tight truncate"
+                  style={{
+                    fontFamily: 'var(--font-display, Bebas Neue)',
+                    fontSize: '24px',
+                    letterSpacing: '0.04em',
+                    color: 'var(--foreground)',
+                  }}
+                >
+                  {topScorer.name}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
                   {topScorer.team_colour && (
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: topScorer.team_colour }} />
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: topScorer.team_colour }}
+                    />
                   )}
-                  <p className="text-[var(--muted)] text-sm">{topScorer.team_name}</p>
+                  <p
+                    className="text-xs font-semibold uppercase"
+                    style={{ color: 'var(--muted)', letterSpacing: '0.08em' }}
+                  >
+                    {topScorer.team_name}
+                  </p>
                 </div>
               </div>
-              <div className="ml-auto text-right">
-                <p className="text-4xl font-black text-[var(--gold)]">{topScorer.goals}</p>
-                <p className="text-xs text-[var(--muted)]">goals</p>
+              <div className="text-right flex-shrink-0">
+                <p
+                  className="tabular-nums leading-none"
+                  style={{
+                    fontFamily: 'var(--font-display, Bebas Neue)',
+                    fontSize: '52px',
+                    color: 'var(--primary)',
+                    lineHeight: 1,
+                  }}
+                >
+                  {topScorer.goals}
+                </p>
+                <p
+                  className="text-xs uppercase mt-1"
+                  style={{ color: 'var(--muted)', letterSpacing: '0.1em' }}
+                >
+                  goals
+                </p>
               </div>
             </div>
           </section>
         )}
       </div>
+    </div>
+  )
+}
+
+function SectionHeading({
+  label,
+  href,
+  linkLabel,
+}: {
+  label: string
+  href: string
+  linkLabel: string
+}) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-3">
+        <span
+          className="w-0.5 h-5 rounded-full"
+          style={{ backgroundColor: 'var(--primary)' }}
+        />
+        <h2
+          className="font-bold uppercase"
+          style={{
+            fontFamily: 'var(--font-display, Bebas Neue)',
+            fontSize: '18px',
+            letterSpacing: '0.1em',
+            color: 'var(--muted-light)',
+            lineHeight: 1,
+          }}
+        >
+          {label}
+        </h2>
+      </div>
+      <Link
+        href={href}
+        className="text-xs font-semibold uppercase transition-colors"
+        style={{ color: 'var(--primary)', letterSpacing: '0.1em' }}
+      >
+        {linkLabel} →
+      </Link>
     </div>
   )
 }

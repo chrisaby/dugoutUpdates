@@ -8,10 +8,10 @@ export default async function ResultsPage() {
   const supabase = await createClient()
 
   const [
-    { data: matchesData },
-    { data: goalsData },
-    { data: cardsData },
-    { data: motmData },
+    { data: matchesData, error: matchesError },
+    { data: goalsData, error: goalsError },
+    { data: cardsData, error: cardsError },
+    { data: motmData, error: motmError },
   ] = await Promise.all([
     supabase
       .from('matches')
@@ -42,11 +42,15 @@ export default async function ResultsPage() {
       `),
   ])
 
+  if (matchesError) console.error('[results] matches query failed:', matchesError.message)
+  if (goalsError) console.error('[results] goals query failed:', goalsError.message)
+  if (cardsError) console.error('[results] cards query failed:', cardsError.message)
+  if (motmError) console.error('[results] match_motm query failed:', motmError.message)
+
   const matches = matchesData as MatchWithTeams[] ?? []
   const goals = goalsData as GoalWithPlayer[] ?? []
   const cards = cardsData as CardWithPlayer[] ?? []
 
-  // Build MOTM lookup
   const motmByMatch: Record<string, Player & { team: Team }> = {}
   if (motmData) {
     for (const row of motmData) {
@@ -58,11 +62,52 @@ export default async function ResultsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-black text-white mb-1">Results</h1>
-      <p className="text-[var(--muted)] text-sm mb-8">{matches.length} completed match{matches.length !== 1 ? 'es' : ''}</p>
+      {/* Page header */}
+      <div className="mb-10 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
+        <p
+          className="text-xs font-bold uppercase mb-2"
+          style={{ color: 'var(--primary)', letterSpacing: '0.2em' }}
+        >
+          Match Reports
+        </p>
+        <div className="flex items-end justify-between gap-4">
+          <h1
+            className="leading-none"
+            style={{
+              fontFamily: 'var(--font-display, Bebas Neue)',
+              fontSize: 'clamp(40px, 8vw, 72px)',
+              color: 'var(--foreground)',
+              letterSpacing: '0.03em',
+            }}
+          >
+            Results
+          </h1>
+          <span
+            className="font-bold mb-1"
+            style={{
+              fontFamily: 'var(--font-display, Bebas Neue)',
+              fontSize: '24px',
+              color: 'var(--muted)',
+              letterSpacing: '0.05em',
+            }}
+          >
+            {matches.length} played
+          </span>
+        </div>
+      </div>
 
       {matches.length === 0 ? (
-        <p className="text-[var(--muted)] text-center py-12">No results yet — check back after the first match.</p>
+        <div
+          className="text-center py-16"
+          style={{ color: 'var(--muted)' }}
+        >
+          <p
+            className="text-sm"
+            style={{ letterSpacing: '0.05em' }}
+          >
+            No results yet — check back after the first match.
+          </p>
+        </div>
       ) : (
         <div className="grid gap-4">
           {matches.map((match) => (

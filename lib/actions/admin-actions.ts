@@ -20,7 +20,10 @@ export async function updateFixture(formData: FormData) {
   const venue = (formData.get('venue') as string) || null
 
   const { error } = await supabase.from('matches').update({ date, venue }).eq('id', matchId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:updateFixture]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath('/admin/fixtures')
   revalidatePath('/fixtures')
   revalidatePath('/')
@@ -37,7 +40,10 @@ export async function updateMatchResult(formData: FormData) {
   const status = formData.get('status') as string
 
   const { error } = await supabase.from('matches').update({ score1, score2, status }).eq('id', matchId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:updateMatchResult]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/admin/matches')
   revalidatePath('/results')
@@ -62,7 +68,10 @@ export async function addGoal(formData: FormData) {
     minute,
     is_own_goal: isOwnGoal,
   })
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:addGoal]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -75,7 +84,10 @@ export async function deleteGoal(formData: FormData) {
   const matchId = formData.get('matchId') as string
 
   const { error } = await supabase.from('goals').delete().eq('id', goalId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:deleteGoal]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -93,7 +105,10 @@ export async function addCard(formData: FormData) {
   const minute = minuteRaw ? parseInt(minuteRaw) : null
 
   const { error } = await supabase.from('cards').insert({ match_id: matchId, player_id: playerId, type, minute })
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:addCard]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -106,7 +121,10 @@ export async function deleteCard(formData: FormData) {
   const matchId = formData.get('matchId') as string
 
   const { error } = await supabase.from('cards').delete().eq('id', cardId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:deleteCard]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
   revalidatePath('/stats')
@@ -123,7 +141,10 @@ export async function setMotm(formData: FormData) {
   const { error } = await supabase
     .from('match_motm')
     .upsert({ match_id: matchId, motm_player_id: playerId }, { onConflict: 'match_id' })
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:setMotm]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
 }
@@ -133,7 +154,10 @@ export async function clearMotm(formData: FormData) {
   const matchId = formData.get('matchId') as string
 
   const { error } = await supabase.from('match_motm').delete().eq('match_id', matchId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:clearMotm]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/matches/${matchId}`)
   revalidatePath('/results')
 }
@@ -148,7 +172,10 @@ export async function addPlayer(formData: FormData) {
 
   if (!name || !position) throw new Error('Name and position are required')
   const { error } = await supabase.from('players').insert({ team_id: teamId, name, position })
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:addPlayer]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/teams/${teamId}`)
   revalidatePath(`/teams/${teamId}`)
 }
@@ -159,7 +186,10 @@ export async function deletePlayer(formData: FormData) {
   const teamId = formData.get('teamId') as string
 
   const { error } = await supabase.from('players').delete().eq('id', playerId)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:deletePlayer]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath(`/admin/teams/${teamId}`)
   revalidatePath(`/teams/${teamId}`)
   revalidatePath('/stats')
@@ -173,7 +203,10 @@ export async function toggleGroupStageLock(formData: FormData) {
 
   // tournament_settings always has exactly one row (seeded in 001_schema.sql)
   const { error } = await supabase.from('tournament_settings').update({ group_stage_locked: locked }).not('id', 'is', null)
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error('[admin:toggleGroupStageLock]', error.message)
+    throw new Error(error.message)
+  }
   revalidatePath('/admin')
   revalidatePath('/bracket')
 }

@@ -21,14 +21,16 @@ interface CardAgg {
 export default async function StatsPage() {
   const supabase = await createClient()
 
-  const [{ data: scorersData }, { data: cardsData }] = await Promise.all([
+  const [{ data: scorersData, error: scorersError }, { data: cardsData, error: cardsError }] = await Promise.all([
     supabase.from('top_scorers_view').select('*'),
     supabase
       .from('cards')
       .select('type, player:players(id, name, team:teams(id, name, colour))'),
   ])
 
-  // Map top scorers
+  if (scorersError) console.error('[stats] top_scorers_view query failed:', scorersError.message)
+  if (cardsError) console.error('[stats] cards query failed:', cardsError.message)
+
   const scorers = (scorersData as TopScorer[] ?? []).map((s) => ({
     id: s.id,
     name: s.name,
@@ -38,7 +40,6 @@ export default async function StatsPage() {
     valueLabel: 'goals',
   }))
 
-  // Aggregate cards per player
   const cardMap: Record<string, CardAgg> = {}
   for (const c of (cardsData ?? []) as unknown as CardRow[]) {
     const p = c.player
@@ -62,8 +63,26 @@ export default async function StatsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-black text-white mb-1">Player Stats</h1>
-      <p className="text-[var(--muted)] text-sm mb-8">Group stage statistics</p>
+      {/* Page header */}
+      <div className="mb-10 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
+        <p
+          className="text-xs font-bold uppercase mb-2"
+          style={{ color: 'var(--primary)', letterSpacing: '0.2em' }}
+        >
+          Group Stage
+        </p>
+        <h1
+          className="leading-none"
+          style={{
+            fontFamily: 'var(--font-display, Bebas Neue)',
+            fontSize: 'clamp(40px, 8vw, 72px)',
+            color: 'var(--foreground)',
+            letterSpacing: '0.03em',
+          }}
+        >
+          Player Stats
+        </h1>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatsLeaderboard title="Golden Boot" icon="⚽" rows={scorers} />

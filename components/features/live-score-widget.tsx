@@ -41,27 +41,83 @@ export function LiveScoreWidget({ initialMatches }: Props) {
       supabase.removeChannel(channel)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // intentional empty array: subscribe once on mount, Realtime handles updates
   }, [])
 
   const liveMatches = matches.filter((m) => m.status === 'live')
   if (liveMatches.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-red-800/60 p-4 mb-2"
-      style={{ background: 'rgba(239,68,68,0.07)' }}>
-      <div className="flex items-center gap-2 mb-3">
-        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-        <span className="text-red-400 text-xs font-bold uppercase tracking-widest">Live Now</span>
+    <div
+      className="rounded-lg p-4 mb-2"
+      style={{
+        background: 'var(--live-dim)',
+        border: '1px solid rgba(255,59,59,0.35)',
+      }}
+    >
+      {/* Live header */}
+      <div className="flex items-center gap-2 mb-4">
+        <span
+          className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
+          style={{ backgroundColor: 'var(--live)' }}
+        />
+        <span
+          className="font-bold uppercase"
+          style={{
+            fontFamily: 'var(--font-display, Bebas Neue)',
+            fontSize: '16px',
+            letterSpacing: '0.2em',
+            color: 'var(--live)',
+            lineHeight: 1,
+          }}
+        >
+          Live Now
+        </span>
       </div>
-      <div className="space-y-2">
+
+      <div className="space-y-3">
         {liveMatches.map((match) => (
-          <div key={match.id} className="flex items-center gap-3 text-sm">
-            <span className="font-semibold text-white flex-1 text-right">{match.team1.name}</span>
-            <span className="text-xl font-black text-white tabular-nums">
+          <div key={match.id} className="flex items-center gap-4">
+            {/* Team 1 */}
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <span
+                className="font-semibold text-sm"
+                style={{ color: 'var(--foreground)' }}
+              >
+                {match.team1.name}
+              </span>
+              <span
+                className="w-1.5 h-6 rounded-full flex-shrink-0"
+                style={{ backgroundColor: match.team1.colour ?? 'var(--border-hover)' }}
+              />
+            </div>
+
+            {/* Score */}
+            <div
+              className="flex-shrink-0 tabular-nums"
+              style={{
+                fontFamily: 'var(--font-display, Bebas Neue)',
+                fontSize: '32px',
+                lineHeight: 1,
+                color: 'var(--foreground)',
+                letterSpacing: '0.05em',
+              }}
+            >
               {match.score1 ?? 0} – {match.score2 ?? 0}
-            </span>
-            <span className="font-semibold text-white flex-1">{match.team2.name}</span>
+            </div>
+
+            {/* Team 2 */}
+            <div className="flex items-center gap-2 flex-1">
+              <span
+                className="w-1.5 h-6 rounded-full flex-shrink-0"
+                style={{ backgroundColor: match.team2.colour ?? 'var(--border-hover)' }}
+              />
+              <span
+                className="font-semibold text-sm"
+                style={{ color: 'var(--foreground)' }}
+              >
+                {match.team2.name}
+              </span>
+            </div>
           </div>
         ))}
       </div>

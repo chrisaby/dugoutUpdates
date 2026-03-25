@@ -33,10 +33,17 @@ export function CountdownTimer({ targetDate }: Props) {
     return () => clearInterval(interval)
   }, [targetDate])
 
-  if (timeLeft === undefined) return null  // SSR / before first tick — render nothing
+  if (timeLeft === undefined) return null
 
   if (timeLeft === null) {
-    return <p className="text-[var(--primary)] font-semibold text-sm">Match day! 🏆</p>
+    return (
+      <p
+        className="font-bold text-sm uppercase"
+        style={{ color: 'var(--primary)', letterSpacing: '0.1em' }}
+      >
+        Match Day
+      </p>
+    )
   }
 
   const units = [
@@ -47,13 +54,31 @@ export function CountdownTimer({ targetDate }: Props) {
   ]
 
   return (
-    <div className="flex items-end gap-3">
-      {units.map(({ value, label }) => (
+    <div className="flex items-end gap-4">
+      {units.map(({ value, label }, i) => (
         <div key={label} className="text-center">
-          <div className="text-3xl font-black text-white tabular-nums leading-none">
+          <div
+            className="tabular-nums leading-none"
+            style={{
+              fontFamily: 'var(--font-display, Bebas Neue)',
+              fontSize: '36px',
+              color: i === 3 ? 'var(--muted-light)' : 'var(--foreground)',
+              letterSpacing: '0.02em',
+            }}
+          >
             {String(value).padStart(2, '0')}
           </div>
-          <div className="text-xs text-[var(--muted)] uppercase tracking-wide mt-1">{label}</div>
+          <div
+            className="mt-1 uppercase"
+            style={{
+              fontSize: '9px',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              color: 'var(--muted)',
+            }}
+          >
+            {label}
+          </div>
         </div>
       ))}
     </div>

@@ -29,54 +29,120 @@ export function ResultCard({ match, goals, cards, motmPlayer }: Props) {
     (a, b) => (a.minute ?? 0) - (b.minute ?? 0)
   )
 
+  const score1 = match.score1 ?? 0
+  const score2 = match.score2 ?? 0
+  const team1Won = score1 > score2
+  const team2Won = score2 > score1
+
   return (
-    <div className="rounded-lg border border-[var(--border)] overflow-hidden"
-      style={{ backgroundColor: 'var(--surface)' }}>
-      {/* Header */}
-      <div className="px-4 pt-4 pb-3 border-b border-[var(--border)]">
+    <div
+      className="rounded-lg overflow-hidden"
+      style={{
+        backgroundColor: 'var(--surface)',
+        border: '1px solid var(--border)',
+      }}
+    >
+      {/* Score header */}
+      <div
+        className="relative px-5 pt-4 pb-5"
+        style={{
+          background: `linear-gradient(135deg,
+            ${match.team1.colour ?? '#173017'}18 0%,
+            var(--surface-elevated) 50%,
+            ${match.team2.colour ?? '#173017'}18 100%)`,
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        {/* Date + venue */}
         {match.date && (
-          <p className="text-xs text-[var(--muted)] mb-3">
-            {format(new Date(match.date), 'EEE, d MMM yyyy')} · {match.venue}
+          <p
+            className="text-xs mb-4"
+            style={{ color: 'var(--muted)', letterSpacing: '0.08em' }}
+          >
+            {format(new Date(match.date), 'EEE, d MMM yyyy')}
+            {match.venue && ` · ${match.venue}`}
           </p>
         )}
+
         {/* Score row */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* Team 1 */}
           <div className="flex items-center gap-2 flex-1">
-            {match.team1.colour && (
-              <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: match.team1.colour }} />
-            )}
-            <span className="font-bold text-white">{match.team1.name}</span>
+            <span
+              className="w-1.5 h-10 rounded-full flex-shrink-0"
+              style={{ backgroundColor: match.team1.colour ?? 'var(--border-hover)' }}
+            />
+            <span
+              className="font-bold text-sm leading-tight"
+              style={{ color: team1Won ? 'var(--foreground)' : 'var(--muted-light)' }}
+            >
+              {match.team1.name}
+            </span>
           </div>
-          <span className="text-3xl font-black text-white tabular-nums flex-shrink-0">
-            {match.score1} – {match.score2}
-          </span>
+
+          {/* Score */}
+          <div className="flex-shrink-0 text-center">
+            <span
+              className="tabular-nums"
+              style={{
+                fontFamily: 'var(--font-display, Bebas Neue)',
+                fontSize: '42px',
+                lineHeight: 1,
+                color: 'var(--foreground)',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {match.score1} – {match.score2}
+            </span>
+            <p
+              className="text-xs text-center mt-0.5"
+              style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}
+            >
+              FT
+            </p>
+          </div>
+
+          {/* Team 2 */}
           <div className="flex items-center gap-2 flex-1 flex-row-reverse">
-            {match.team2.colour && (
-              <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: match.team2.colour }} />
-            )}
-            <span className="font-bold text-white text-right">{match.team2.name}</span>
+            <span
+              className="w-1.5 h-10 rounded-full flex-shrink-0"
+              style={{ backgroundColor: match.team2.colour ?? 'var(--border-hover)' }}
+            />
+            <span
+              className="font-bold text-sm leading-tight text-right"
+              style={{ color: team2Won ? 'var(--foreground)' : 'var(--muted-light)' }}
+            >
+              {match.team2.name}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Scorers */}
       {(allTeam1Goals.length > 0 || allTeam2Goals.length > 0) && (
-        <div className="px-4 py-3 border-b border-[var(--border)] grid grid-cols-2 gap-4 text-sm">
-          <div className="space-y-1">
+        <div
+          className="px-5 py-3 grid grid-cols-2 gap-4 text-xs"
+          style={{ borderBottom: '1px solid var(--border)' }}
+        >
+          <div className="space-y-1.5">
             {allTeam1Goals.map((g) => (
-              <div key={g.id} className="text-[var(--muted)]">
-                ⚽ {g.player.name}
-                {g.is_own_goal && ' (og)'}
-                {g.minute && <span className="text-xs ml-1">{g.minute}&apos;</span>}
+              <div key={g.id} className="flex items-baseline gap-1.5" style={{ color: 'var(--muted-light)' }}>
+                <span style={{ color: 'var(--primary)' }}>⚽</span>
+                <span>{g.player.name}{g.is_own_goal && ' (og)'}</span>
+                {g.minute && (
+                  <span style={{ color: 'var(--muted)' }}>{g.minute}&apos;</span>
+                )}
               </div>
             ))}
           </div>
-          <div className="space-y-1 text-right">
+          <div className="space-y-1.5 text-right">
             {allTeam2Goals.map((g) => (
-              <div key={g.id} className="text-[var(--muted)]">
-                {g.minute && <span className="text-xs mr-1">{g.minute}&apos;</span>}
-                {g.player.name}
-                {g.is_own_goal && ' (og)'} ⚽
+              <div key={g.id} className="flex items-baseline justify-end gap-1.5" style={{ color: 'var(--muted-light)' }}>
+                {g.minute && (
+                  <span style={{ color: 'var(--muted)' }}>{g.minute}&apos;</span>
+                )}
+                <span>{g.player.name}{g.is_own_goal && ' (og)'}</span>
+                <span style={{ color: 'var(--primary)' }}>⚽</span>
               </div>
             ))}
           </div>
@@ -85,15 +151,24 @@ export function ResultCard({ match, goals, cards, motmPlayer }: Props) {
 
       {/* Cards */}
       {cards.length > 0 && (
-        <div className="px-4 py-2 border-b border-[var(--border)] flex flex-wrap gap-3 text-xs text-[var(--muted)]">
+        <div
+          className="px-5 py-2.5 flex flex-wrap gap-3"
+          style={{ borderBottom: '1px solid var(--border)' }}
+        >
           {cards.map((c) => (
-            <span key={c.id} className="flex items-center gap-1">
+            <span
+              key={c.id}
+              className="flex items-center gap-1.5 text-xs"
+              style={{ color: 'var(--muted)' }}
+            >
               <span
-                className="w-3 h-4 rounded-sm inline-block"
+                className="w-2.5 h-3.5 rounded-sm inline-block flex-shrink-0"
                 style={{ backgroundColor: c.type === 'yellow' ? '#eab308' : '#ef4444' }}
               />
-              {c.player.name}
-              {c.minute && ` ${c.minute}'`}
+              <span>{c.player.name}</span>
+              {c.minute && (
+                <span style={{ color: 'var(--muted)', opacity: 0.7 }}>{c.minute}&apos;</span>
+              )}
             </span>
           ))}
         </div>
@@ -101,11 +176,15 @@ export function ResultCard({ match, goals, cards, motmPlayer }: Props) {
 
       {/* MOTM */}
       {motmPlayer && (
-        <div className="px-4 py-2 flex items-center gap-2 text-sm">
-          <span className="text-[var(--gold)]">★</span>
-          <span className="text-[var(--muted)]">Man of the Match:</span>
-          <span className="font-semibold text-white">{motmPlayer.name}</span>
-          <span className="text-[var(--muted)] text-xs">({motmPlayer.team.name})</span>
+        <div className="px-5 py-2.5 flex items-center gap-2">
+          <span style={{ color: 'var(--gold)', fontSize: '14px' }}>★</span>
+          <span className="text-xs" style={{ color: 'var(--muted)' }}>MOTM</span>
+          <span className="text-xs font-bold" style={{ color: 'var(--foreground)' }}>
+            {motmPlayer.name}
+          </span>
+          <span className="text-xs" style={{ color: 'var(--muted)' }}>
+            · {motmPlayer.team.name}
+          </span>
         </div>
       )}
     </div>
