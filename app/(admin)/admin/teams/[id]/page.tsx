@@ -97,8 +97,8 @@ export default async function AdminTeamDetailPage({ params }: Props) {
             </select>
           </div>
           <button type="submit"
-            className="px-4 py-1.5 rounded-md text-sm font-medium text-white hover:opacity-80 transition-colors"
-            style={{ backgroundColor: 'var(--primary)' }}>
+            className="px-4 py-1.5 rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
             Add player
           </button>
         </form>

@@ -80,8 +80,11 @@ export default async function AdminDashboardPage() {
           <input type="hidden" name="locked" value={locked ? 'false' : 'true'} />
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors"
-            style={{ backgroundColor: locked ? '#6b7280' : 'var(--primary)' }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            style={{
+              backgroundColor: locked ? '#6b7280' : 'var(--primary)',
+              color: locked ? 'var(--foreground)' : 'var(--primary-foreground)'
+            }}
           >
             {locked ? 'Unlock group stage' : 'Lock group stage'}
           </button>

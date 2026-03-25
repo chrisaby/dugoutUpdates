@@ -117,8 +117,8 @@ export default async function AdminMatchDetailPage({ params }: Props) {
             </select>
           </div>
           <button type="submit"
-            className="px-4 py-1.5 rounded-md text-sm font-medium text-white hover:opacity-80 transition-colors"
-            style={{ backgroundColor: 'var(--primary)' }}>
+            className="px-4 py-1.5 rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
             Save result
           </button>
         </form>
@@ -178,8 +178,8 @@ export default async function AdminMatchDetailPage({ params }: Props) {
             <label htmlFor="isOwnGoal" className="text-sm text-[var(--muted)]">Own goal</label>
           </div>
           <button type="submit"
-            className="px-3 py-1.5 rounded-md text-sm font-medium text-white hover:opacity-80 transition-colors"
-            style={{ backgroundColor: 'var(--primary)' }}>
+            className="px-3 py-1.5 rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
             Add goal
           </button>
         </form>
@@ -240,8 +240,8 @@ export default async function AdminMatchDetailPage({ params }: Props) {
               style={{ backgroundColor: 'var(--surface-hover)' }} />
           </div>
           <button type="submit"
-            className="px-3 py-1.5 rounded-md text-sm font-medium text-white hover:opacity-80 transition-colors"
-            style={{ backgroundColor: 'var(--primary)' }}>
+            className="px-3 py-1.5 rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
             Add card
           </button>
         </form>
@@ -279,8 +279,8 @@ export default async function AdminMatchDetailPage({ params }: Props) {
             </select>
           </div>
           <button type="submit"
-            className="px-3 py-1.5 rounded-md text-sm font-medium text-white hover:opacity-80 transition-colors"
-            style={{ backgroundColor: 'var(--primary)' }}>
+            className="px-3 py-1.5 rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
             Set MOTM
           </button>
         </form>

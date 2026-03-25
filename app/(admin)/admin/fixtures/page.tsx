@@ -63,8 +63,8 @@ export default async function AdminFixturesPage() {
               </div>
               <button
                 type="submit"
-                className="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors hover:opacity-80"
-                style={{ backgroundColor: 'var(--primary)' }}
+                className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:opacity-80"
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}
               >
                 Save
               </button>

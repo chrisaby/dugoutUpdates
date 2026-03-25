@@ -18,12 +18,18 @@
 
   /* Brand accents */
   --primary: #bef043;
+  --primary-foreground: #050c05;
   --primary-dim: #91bb30;
   --primary-glow: rgba(190, 240, 67, 0.12);
+  --secondary: #f5b920;
+  --secondary-foreground: #050c05;
   --gold: #f5b920;
   --gold-dim: #c9961a;
   --live: #ff3b3b;
   --live-dim: rgba(255, 59, 59, 0.1);
+  --destructive: #ff3b3b;
+  --destructive-foreground: #ecf8ec;
+  --ring: #bef043;
 }
 
 * {
