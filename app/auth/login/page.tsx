@@ -1,25 +1,11 @@
-import { signInWithEmail } from '@/lib/actions/auth-actions'
+import { signInWithPassword } from '@/lib/actions/auth-actions'
 
 interface Props {
-  searchParams: Promise<{ sent?: string; error?: string }>
+  searchParams: Promise<{ error?: string }>
 }
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { sent, error } = await searchParams
-
-  if (sent) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
-        <div className="text-center max-w-sm mx-auto px-4">
-          <div className="text-4xl mb-4">✉️</div>
-          <h1 className="text-2xl font-black text-white mb-2">Check your email</h1>
-          <p className="text-[var(--muted)]">
-            A magic link has been sent. Click it to access the admin panel.
-          </p>
-        </div>
-      </div>
-    )
-  }
+  const { error } = await searchParams
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
@@ -27,23 +13,21 @@ export default async function LoginPage({ searchParams }: Props) {
         <div className="text-center mb-8">
           <span className="text-[var(--primary)] font-black text-3xl">FPL</span>
           <h1 className="text-xl font-bold text-white mt-2">Admin Login</h1>
-          <p className="text-[var(--muted)] text-sm mt-1">Enter your email to receive a magic link</p>
+          <p className="text-[var(--muted)] text-sm mt-1">Enter your email and password</p>
         </div>
 
         {error && (
           <div className="rounded-lg border border-red-800/60 px-4 py-3 mb-4"
             style={{ backgroundColor: 'rgba(239,68,68,0.07)' }}>
             <p className="text-red-400 text-sm">
-              {error === 'invalid_link'
-                ? 'That link is invalid or expired. Please request a new one.'
-                : error === 'send_failed'
-                  ? 'Failed to send magic link. Please try again.'
-                  : 'Something went wrong. Please try again.'}
+              {error === 'invalid_credentials'
+                ? 'Invalid email or password. Please try again.'
+                : 'Something went wrong. Please try again.'}
             </p>
           </div>
         )}
 
-        <form action={signInWithEmail} className="space-y-4">
+        <form action={signInWithPassword} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
               Email address
@@ -59,12 +43,29 @@ export default async function LoginPage({ searchParams }: Props) {
               style={{ backgroundColor: 'var(--surface)' }}
             />
           </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              placeholder="••••••••"
+              className="w-full px-3 py-2.5 rounded-lg border border-[var(--border)] text-white text-sm focus:outline-none focus:border-[var(--primary)] transition-colors"
+              style={{ backgroundColor: 'var(--surface)' }}
+            />
+          </div>
+
           <button
             type="submit"
             className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-colors hover:opacity-90"
             style={{ backgroundColor: 'var(--primary)' }}
           >
-            Send magic link
+            Sign in
           </button>
         </form>
       </div>
