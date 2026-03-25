@@ -3,42 +3,43 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import type { MatchWithTeams } from '@/lib/types'
 
+function MatchRow({ match }: { match: MatchWithTeams }) {
+  return (
+    <Link href={`/admin/matches/${match.id}`}
+      className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)] transition-colors">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-white truncate">
+          {match.team1.name} vs {match.team2.name}
+        </p>
+        <p className="text-xs text-[var(--muted)] mt-0.5">
+          {match.date ? format(new Date(match.date), 'dd MMM yyyy, HH:mm') : 'No date set'}
+          {match.venue ? ` · ${match.venue}` : ''}
+        </p>
+      </div>
+      {match.status === 'completed' && match.score1 !== null && (
+        <span className="text-sm font-black text-white tabular-nums">
+          {match.score1} – {match.score2}
+        </span>
+      )}
+      <span className="text-xs text-[var(--primary)]">Edit →</span>
+    </Link>
+  )
+}
+
 export default async function AdminMatchesPage() {
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('matches')
     .select('*, team1:teams!matches_team1_id_fkey(id,name,colour,badge_url,created_at), team2:teams!matches_team2_id_fkey(id,name,colour,badge_url,created_at)')
     .order('date', { ascending: true, nullsFirst: false })
+  if (error) throw new Error(error.message)
 
   const matches = (data as MatchWithTeams[] ?? [])
   const groups = {
     live: matches.filter((m) => m.status === 'live'),
     upcoming: matches.filter((m) => m.status === 'upcoming'),
     completed: matches.filter((m) => m.status === 'completed'),
-  }
-
-  function MatchRow({ match }: { match: MatchWithTeams }) {
-    return (
-      <Link href={`/admin/matches/${match.id}`}
-        className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)] transition-colors">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">
-            {match.team1.name} vs {match.team2.name}
-          </p>
-          <p className="text-xs text-[var(--muted)] mt-0.5">
-            {match.date ? format(new Date(match.date), 'dd MMM yyyy, HH:mm') : 'No date set'}
-            {match.venue ? ` · ${match.venue}` : ''}
-          </p>
-        </div>
-        {match.status === 'completed' && match.score1 !== null && (
-          <span className="text-sm font-black text-white tabular-nums">
-            {match.score1} – {match.score2}
-          </span>
-        )}
-        <span className="text-xs text-[var(--primary)]">Edit →</span>
-      </Link>
-    )
   }
 
   return (

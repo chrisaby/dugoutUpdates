@@ -6,10 +6,11 @@ import type { MatchWithTeams } from '@/lib/types'
 export default async function AdminFixturesPage() {
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('matches')
     .select('*, team1:teams!matches_team1_id_fkey(id,name,colour,badge_url,created_at), team2:teams!matches_team2_id_fkey(id,name,colour,badge_url,created_at)')
     .order('date', { ascending: true, nullsFirst: false })
+  if (error) throw new Error(error.message)
 
   const matches = (data as MatchWithTeams[] ?? [])
 

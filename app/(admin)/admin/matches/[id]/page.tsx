@@ -10,7 +10,7 @@ import {
   setMotm,
   clearMotm,
 } from '@/lib/actions/admin-actions'
-import type { MatchWithTeams, Player, MatchMotm } from '@/lib/types'
+import type { MatchWithTeams, Player, MatchMotm, CardType } from '@/lib/types'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -21,16 +21,24 @@ export default async function AdminMatchDetailPage({ params }: Props) {
   const supabase = await createClient()
 
   // Fetch match first (need team IDs for player queries)
-  const { data: matchRaw } = await supabase
+  const { data: matchRaw, error: matchError } = await supabase
     .from('matches')
     .select('*, team1:teams!matches_team1_id_fkey(id,name,colour,badge_url,created_at), team2:teams!matches_team2_id_fkey(id,name,colour,badge_url,created_at)')
     .eq('id', matchId)
     .single()
 
+  if (matchError || !matchRaw) notFound()
+
   const match = matchRaw as MatchWithTeams | null
   if (!match) notFound()
 
-  const [{ data: goalsData }, { data: cardsData }, { data: motmData }, { data: team1PlayersData }, { data: team2PlayersData }] = await Promise.all([
+  const [
+    { data: goalsData, error: goalsError },
+    { data: cardsData, error: cardsError },
+    { data: motmData },
+    { data: team1PlayersData, error: t1Error },
+    { data: team2PlayersData, error: t2Error },
+  ] = await Promise.all([
     supabase.from('goals').select('*, player:players(id, name, team_id)').eq('match_id', matchId).order('minute'),
     supabase.from('cards').select('*, player:players(id, name, team_id)').eq('match_id', matchId).order('minute'),
     supabase.from('match_motm').select('*').eq('match_id', matchId).maybeSingle(),
@@ -38,8 +46,15 @@ export default async function AdminMatchDetailPage({ params }: Props) {
     supabase.from('players').select('*').eq('team_id', match.team2_id).order('name'),
   ])
 
-  const goals = (goalsData ?? []) as Array<{ id: string; match_id: string; player_id: string; minute: number | null; is_own_goal: boolean; player: { id: string; name: string; team_id: string } }>
-  const cards = (cardsData ?? []) as Array<{ id: string; match_id: string; player_id: string; type: string; minute: number | null; player: { id: string; name: string; team_id: string } }>
+  if (goalsError || cardsError || t1Error || t2Error) {
+    throw new Error('Failed to load match data')
+  }
+
+  type GoalRow = { id: string; match_id: string; player_id: string; minute: number | null; is_own_goal: boolean; player: { id: string; name: string; team_id: string } }
+  type CardRow = { id: string; match_id: string; player_id: string; type: CardType; minute: number | null; player: { id: string; name: string; team_id: string } }
+
+  const goals = (goalsData ?? []) as GoalRow[]
+  const cards = (cardsData ?? []) as CardRow[]
   const motm = motmData as MatchMotm | null
   const team1Players = (team1PlayersData ?? []) as Player[]
   const team2Players = (team2PlayersData ?? []) as Player[]
