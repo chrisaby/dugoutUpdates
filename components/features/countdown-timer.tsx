@@ -9,7 +9,7 @@ interface TimeLeft {
   seconds: number
 }
 
-function getTimeLeft(targetDate: string): TimeLeft | null {
+export function getTimeLeft(targetDate: string): TimeLeft | null {
   const diff = new Date(targetDate).getTime() - Date.now()
   if (diff <= 0) return null
   return {
@@ -25,14 +25,17 @@ interface Props {
 }
 
 export function CountdownTimer({ targetDate }: Props) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() => getTimeLeft(targetDate))
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null | undefined>(undefined)
 
   useEffect(() => {
+    setTimeLeft(getTimeLeft(targetDate))
     const interval = setInterval(() => setTimeLeft(getTimeLeft(targetDate)), 1000)
     return () => clearInterval(interval)
   }, [targetDate])
 
-  if (!timeLeft) {
+  if (timeLeft === undefined) return null  // SSR / before first tick — render nothing
+
+  if (timeLeft === null) {
     return <p className="text-[var(--primary)] font-semibold text-sm">Match day! 🏆</p>
   }
 

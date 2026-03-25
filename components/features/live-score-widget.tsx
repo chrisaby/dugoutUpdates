@@ -24,10 +24,12 @@ export function LiveScoreWidget({ initialMatches }: Props) {
           table: 'matches',
         },
         (payload) => {
+          const updated = payload.new as { id: string; score1: number | null; score2: number | null; status: string }
+          if (!updated?.id) return
           setMatches((prev) =>
             prev.map((m) =>
-              m.id === payload.new.id
-                ? { ...m, score1: payload.new.score1, score2: payload.new.score2, status: payload.new.status }
+              m.id === updated.id
+                ? { ...m, score1: updated.score1, score2: updated.score2, status: updated.status as MatchWithTeams['status'] }
                 : m
             )
           )
@@ -38,6 +40,8 @@ export function LiveScoreWidget({ initialMatches }: Props) {
     return () => {
       supabase.removeChannel(channel)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // intentional empty array: subscribe once on mount, Realtime handles updates
   }, [])
 
   const liveMatches = matches.filter((m) => m.status === 'live')
