@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+
+const IST = 'Asia/Kolkata'
 import type { MatchWithTeams } from '@/lib/types'
 
 function MatchRow({ match }: { match: MatchWithTeams }) {
@@ -12,7 +14,7 @@ function MatchRow({ match }: { match: MatchWithTeams }) {
           {match.team1.name} vs {match.team2.name}
         </p>
         <p className="text-xs text-[var(--muted)] mt-0.5">
-          {match.date ? format(new Date(match.date), 'dd MMM yyyy, HH:mm') : 'No date set'}
+          {match.date ? formatInTimeZone(new Date(match.date), IST, 'dd MMM yyyy, HH:mm') : 'No date set'}
           {match.venue ? ` · ${match.venue}` : ''}
         </p>
       </div>

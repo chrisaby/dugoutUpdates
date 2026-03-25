@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { href: '/results', label: 'Results' },
   { href: '/teams', label: 'Teams' },
   { href: '/stats', label: 'Stats' },
-  { href: '/bracket', label: 'Bracket' },
+  { href: '/playoffs', label: 'Playoffs' },
 ]
 
 export function Navbar() {

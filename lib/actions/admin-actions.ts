@@ -16,7 +16,12 @@ async function requireAuth() {
 export async function updateFixture(formData: FormData) {
   const supabase = await requireAuth()
   const matchId = formData.get('matchId') as string
-  const date = (formData.get('date') as string) || null
+  const rawDate = (formData.get('date') as string) || null
+  // datetime-local sends a naive string (e.g. "2026-03-23T20:00"). Append IST offset
+  // so Postgres (timestamptz) stores the correct UTC value regardless of server timezone.
+  const date = rawDate && !rawDate.includes('+') && !rawDate.endsWith('Z')
+    ? rawDate + '+05:30'
+    : rawDate
   const venue = (formData.get('venue') as string) || null
 
   const { error } = await supabase.from('matches').update({ date, venue }).eq('id', matchId)
@@ -208,5 +213,5 @@ export async function toggleGroupStageLock(formData: FormData) {
     throw new Error(error.message)
   }
   revalidatePath('/admin')
-  revalidatePath('/bracket')
+  revalidatePath('/playoffs')
 }

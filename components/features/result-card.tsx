@@ -1,5 +1,7 @@
 import type { MatchWithTeams, GoalWithPlayer, CardWithPlayer, Player, Team } from '@/lib/types'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+
+const IST = 'Asia/Kolkata'
 
 interface Props {
   match: MatchWithTeams
@@ -59,7 +61,7 @@ export function ResultCard({ match, goals, cards, motmPlayer }: Props) {
             className="text-xs mb-4"
             style={{ color: 'var(--muted)', letterSpacing: '0.08em' }}
           >
-            {format(new Date(match.date), 'EEE, d MMM yyyy')}
+            {formatInTimeZone(new Date(match.date), IST, 'EEE, d MMM yyyy')}
             {match.venue && ` · ${match.venue}`}
           </p>
         )}

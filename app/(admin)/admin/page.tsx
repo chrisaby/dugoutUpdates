@@ -73,7 +73,7 @@ export default async function AdminDashboardPage() {
         <h2 className="font-bold text-white mb-1">Group stage lock</h2>
         <p className="text-sm text-[var(--muted)] mb-4">
           {locked
-            ? 'Group stage is locked. Knockout bracket is active.'
+            ? 'Group stage is locked. Knockout playoffs is active.'
             : 'Lock when all 15 group matches are complete. This reveals the knockout bracket.'}
         </p>
         <form action={toggleGroupStageLock}>

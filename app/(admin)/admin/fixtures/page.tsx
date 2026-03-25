@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { updateFixture } from '@/lib/actions/admin-actions'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+
+const IST = 'Asia/Kolkata'
 import type { MatchWithTeams } from '@/lib/types'
 
 export default async function AdminFixturesPage() {
@@ -45,7 +47,7 @@ export default async function AdminFixturesPage() {
                 <input
                   type="datetime-local"
                   name="date"
-                  defaultValue={match.date ? format(new Date(match.date), "yyyy-MM-dd'T'HH:mm") : ''}
+                  defaultValue={match.date ? formatInTimeZone(new Date(match.date), IST, "yyyy-MM-dd'T'HH:mm") : ''}
                   className="px-2 py-1.5 rounded-md border border-[var(--border)] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                   style={{ backgroundColor: 'var(--surface-hover)' }}
                 />

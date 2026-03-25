@@ -1,4 +1,6 @@
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+
+const IST = 'Asia/Kolkata'
 import { cn } from '@/lib/utils'
 import type { MatchWithTeams } from '@/lib/types'
 
@@ -44,7 +46,7 @@ export function FixtureCard({ match }: Props) {
         >
           <span style={{ letterSpacing: '0.05em' }}>
             {match.date
-              ? format(new Date(match.date), 'EEE d MMM · HH:mm')
+              ? formatInTimeZone(new Date(match.date), IST, 'EEE d MMM · HH:mm')
               : 'Date TBD'}
           </span>
           <div className="flex items-center gap-2">

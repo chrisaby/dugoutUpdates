@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+
+const IST = 'Asia/Kolkata'
 import {
   updateMatchResult,
   addGoal,
@@ -67,7 +69,7 @@ export default async function AdminMatchDetailPage({ params }: Props) {
       {/* Header */}
       <div>
         <p className="text-[var(--muted)] text-sm mb-1">
-          {match.date ? format(new Date(match.date), 'dd MMM yyyy, HH:mm') : 'No date set'}
+          {match.date ? formatInTimeZone(new Date(match.date), IST, 'dd MMM yyyy, HH:mm') : 'No date set'}
           {match.venue ? ` · ${match.venue}` : ''}
         </p>
         <h1 className="text-3xl font-black text-white">
