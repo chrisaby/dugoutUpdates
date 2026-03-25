@@ -30,6 +30,8 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.redirect(`${appUrl}/auth/login?error=invalid_link`)
     }
+  } else {
+    return NextResponse.redirect(`${appUrl}/auth/login?error=invalid_link`)
   }
 
   return NextResponse.redirect(`${appUrl}/admin`)
