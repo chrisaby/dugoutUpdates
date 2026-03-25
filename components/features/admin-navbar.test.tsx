@@ -24,4 +24,13 @@ describe('AdminNavbar', () => {
     render(<AdminNavbar />)
     expect(screen.getByRole('link', { name: /public site/i })).toBeInTheDocument()
   })
+
+  it('applies active styling to the current route link', () => {
+    const { container } = render(<AdminNavbar />)
+    const dashboardLink = screen.getByRole('link', { name: 'Dashboard' })
+    expect(dashboardLink.className).toContain('text-white')
+    // Inactive links have text-[var(--muted)] styling
+    const matchesLink = screen.getByRole('link', { name: 'Matches' })
+    expect(matchesLink.className).toContain('text-[var(--muted)]')
+  })
 })

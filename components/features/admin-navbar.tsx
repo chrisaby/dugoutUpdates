@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 const links = [
   { href: '/admin', label: 'Dashboard' },
@@ -9,6 +10,11 @@ const links = [
   { href: '/admin/fixtures', label: 'Fixtures' },
   { href: '/admin/teams', label: 'Teams' },
 ]
+
+function isActive(href: string, pathname: string): boolean {
+  if (href === '/admin') return pathname === '/admin'
+  return pathname.startsWith(href)
+}
 
 export function AdminNavbar() {
   const pathname = usePathname()
@@ -21,11 +27,12 @@ export function AdminNavbar() {
             <Link
               key={href}
               href={href}
-              className={
-                pathname === href
-                  ? 'px-3 py-1.5 rounded-md text-sm font-medium text-white bg-[var(--surface-hover)]'
-                  : 'px-3 py-1.5 rounded-md text-sm font-medium text-[var(--muted)] hover:text-white hover:bg-[var(--surface-hover)] transition-colors'
-              }
+              className={cn(
+                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                isActive(href, pathname)
+                  ? 'text-white bg-[var(--surface-hover)]'
+                  : 'text-[var(--muted)] hover:text-white hover:bg-[var(--surface-hover)]'
+              )}
             >
               {label}
             </Link>
