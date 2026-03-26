@@ -32,8 +32,10 @@ export default async function FixturesPage({ searchParams }: Props) {
   const teams = teamsData as Team[] ?? []
   let matches = matchesData as MatchWithTeams[] ?? []
 
-  if (phase) matches = matches.filter((m) => m.phase === phase)
-  if (team) matches = matches.filter((m) => m.team1_id === team || m.team2_id === team)
+  const VALID_PHASES = ['group', 'semi', 'final', 'third_place']
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (phase && VALID_PHASES.includes(phase)) matches = matches.filter((m) => m.phase === phase)
+  if (team && UUID_RE.test(team)) matches = matches.filter((m) => m.team1_id === team || m.team2_id === team)
 
   return (
     <div>

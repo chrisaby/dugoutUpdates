@@ -10,8 +10,11 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export default async function TeamPage({ params }: Props) {
   const { id } = await params
+  if (!UUID_RE.test(id)) notFound()
   const supabase = await createClient()
 
   const [{ data: teamData, error: teamError }, { data: playersData, error: playersError }, { data: matchesData, error: matchesError }] = await Promise.all([

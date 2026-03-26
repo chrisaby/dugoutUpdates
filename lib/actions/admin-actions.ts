@@ -3,6 +3,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import type { Position, MatchStatus, CardType } from '@/lib/types'
+
+const VALID_POSITIONS: Position[] = ['GK', 'DEF', 'MID', 'FWD']
+const VALID_STATUSES: MatchStatus[] = ['upcoming', 'live', 'completed']
+const VALID_CARD_TYPES: CardType[] = ['yellow', 'red']
 
 async function requireAuth() {
   const supabase = await createClient()
@@ -23,6 +28,7 @@ export async function updateFixture(formData: FormData) {
     ? rawDate + '+05:30'
     : rawDate
   const venue = (formData.get('venue') as string) || null
+  if (venue && venue.length > 200) throw new Error('Venue name too long')
 
   const { error } = await supabase.from('matches').update({ date, venue }).eq('id', matchId)
   if (error) {
@@ -43,6 +49,7 @@ export async function updateMatchResult(formData: FormData) {
   const score2 = parseInt(formData.get('score2') as string)
   if (isNaN(score1) || isNaN(score2)) throw new Error('Invalid score values')
   const status = formData.get('status') as string
+  if (!VALID_STATUSES.includes(status as MatchStatus)) throw new Error('Invalid status value')
 
   const { error } = await supabase.from('matches').update({ score1, score2, status }).eq('id', matchId)
   if (error) {
@@ -106,6 +113,7 @@ export async function addCard(formData: FormData) {
   const matchId = formData.get('matchId') as string
   const playerId = formData.get('playerId') as string
   const type = formData.get('type') as string
+  if (!VALID_CARD_TYPES.includes(type as CardType)) throw new Error('Invalid card type')
   const minuteRaw = formData.get('minute') as string
   const minute = minuteRaw ? parseInt(minuteRaw) : null
 
@@ -176,6 +184,8 @@ export async function addPlayer(formData: FormData) {
   const position = formData.get('position') as string
 
   if (!name || !position) throw new Error('Name and position are required')
+  if (name.length > 100) throw new Error('Player name too long')
+  if (!VALID_POSITIONS.includes(position as Position)) throw new Error('Invalid position value')
   const { error } = await supabase.from('players').insert({ team_id: teamId, name, position })
   if (error) {
     console.error('[admin:addPlayer]', error.message)

@@ -19,7 +19,7 @@ export async function signInWithPassword(formData: FormData) {
   })
 
   if (error) {
-    console.error('[auth] signInWithPassword error:', error.message)
+    console.error('[auth] sign-in failed')
     redirect('/auth/login?error=invalid_credentials')
   }
 
